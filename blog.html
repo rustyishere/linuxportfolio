@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Rahul's Blog</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💻</text></svg>">
+<style>
+  /* --- Base Theme (Copied from index.html) --- */
+  :root{
+    --bg:#010101;
+    --green:#00ff66;
+    --muted:#0f0f0f; /* Used for borders/dividers */
+    --accent:#66ccff; /* Used for post titles */
+    --ghost:#7bed9f; /* Used for meta-data */
+    --text-color: #e0e0e0; /* Main text for readability */
+    --panel: rgba(255,255,255,0.02);
+    --mono: 'Courier New', ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    /* This page uses the simple dark background for readability */
+    background:linear-gradient(180deg,#000 0%, #020202 60%);
+    color:var(--text-color); 
+    font-family:var(--mono);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height: 1.6;
+  }
+
+  /* --- Blog Styles --- */
+  .blog-wrap{
+    max-width:900px;
+    margin:24px auto;
+    padding:18px;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 1.1em;
+    margin-bottom: 25px;
+    padding: 8px 12px;
+    border: 1px solid var(--muted);
+    background: var(--panel);
+  }
+  .back-link:hover {
+    background: var(--muted);
+    color: var(--green);
+  }
+
+  .blog-title {
+    font-size: 2.5em;
+    color: var(--green);
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--muted);
+    padding-bottom: 10px;
+  }
+
+  /* --- Post Index (Table of Contents) --- */
+  .post-index {
+    background: var(--panel);
+    border: 1px solid var(--muted);
+    padding: 15px 25px;
+    border-radius: 6px;
+    margin-bottom: 40px;
+  }
+  .post-index h3 {
+    margin-top: 0;
+    color: var(--green);
+    font-size: 1.4em;
+  }
+  .post-index ul {
+    list-style: none;
+    padding-left: 0;
+    line-height: 1.8;
+  }
+  .post-index a {
+    color: var(--ghost);
+    text-decoration: none;
+  }
+  .post-index a:hover {
+    color: var(--green);
+    text-decoration: underline;
+  }
+  .post-index .meta-date {
+    color: var(--accent);
+    margin-right: 10px;
+  }
+  .post-index .no-posts {
+    color: var(--ghost);
+    opacity: 0.7;
+  }
+
+  /* --- Individual Post Styling --- */
+  .post {
+    margin-bottom: 40px;
+  }
+  .post h2 {
+    color: var(--accent);
+    font-size: 1.8em;
+    margin-bottom: 5px;
+  }
+  .post .post-meta {
+    color: var(--ghost);
+    font-size: 0.9em;
+    margin-bottom: 15px;
+  }
+  .post p {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+  }
+  .post a {
+    color: var(--accent);
+  }
+
+  /* Code Blocks */
+  .code-block {
+    display: block;
+    background: #000;
+    border: 1px solid var(--muted);
+    padding: 15px;
+    color: var(--green);
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 1em;
+    white-space: pre;
+    border-radius: 4px;
+    margin: 15px 0;
+  }
+
+  .post-divider {
+    border: 0;
+    height: 1px;
+    background: var(--muted);
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<div class="blog-wrap">
+  
+  <a href="home.html" class="back-link">< rahul@portfolio:~$ cd ..</a>
+
+  <h1 class="blog-title">// BLOG & WRITEUPS</h1>
+
+  <section class="post-index">
+    <h3>FILE_INDEX</h3>
+    <ul>
+      <li>
+        <span class="no-posts">No transmissions yet... Check back soon.</span>
+      </li>
+      </ul>
+  </section>
+
+
+  <main>
+
+    <article class="post" id="post-placeholder">
+      <h2>// NO TRANSMISSIONS YET...</h2>
+      <p>My blog is currently being set up. I'll be posting my VulnHub writeups, project dev logs, and cybersecurity notes here shortly.</p>
+      <p>In the meantime, head back to the terminal (click the back link above) to check out my projects and skills.</p>
+    </article>
+
+    </main>
+
+</div>
+
+</body>
+</html>
