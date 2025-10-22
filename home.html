@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Rahul's Portfolio</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💻</text></svg>">
+<style>
+  :root{
+    --bg:#010101;
+    --green:#00ff66;
+    --muted:#0f0f0f;
+    --accent:#66ccff;
+    --ghost:#7bed9f;
+    --panel: rgba(255,255,255,0.02);
+    --mono: 'Courier New', ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    background: #000;
+    color:var(--green);
+    font-family:var(--mono);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow: hidden; 
+  }
+
+  .wrap{
+    max-width:1000px;
+    margin:24px auto;
+    padding:18px;
+    border-radius:8px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.8);
+    position: relative; 
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(1.5px);
+    -webkit-backdrop-filter: blur(1.5px);
+    border: 1px solid var(--muted);
+  }
+
+  #terminal {
+    background: rgba(0,0,0,0.6);
+    border-radius:6px;
+    padding:18px;
+    min-height:380px;
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+  }
+
+  pre#output {
+    margin:0 0 8px 0;
+    white-space:pre-wrap;
+    word-break:break-word;
+    line-height:1.45;
+    font-size:15px;
+    max-height:500px;
+    overflow:auto;
+    padding-bottom:6px;
+  }
+
+  .banner{
+    color:var(--ghost);
+    margin-bottom:10px;
+    font-size:12px;
+  }
+
+  .prompt-line{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:6px;
+  }
+
+  .prompt {
+    color:var(--accent);
+    min-width:220px;
+    font-size:15px;
+  }
+
+  .input-wrap{
+    flex:1;
+    position:relative;
+  }
+
+input#cmd {
+  background: transparent;
+  color: var(--green);
+  border: none;
+  outline: none;
+  font-family: 'Courier New', monospace;
+  font-size: 15px;
+  width: 100%;
+  caret-color: var(--green);
+  text-shadow: 0 0 2px var(--green);
+}
+
+  .meta {
+    color:#9ae6b4;
+    font-size:12px;
+    margin-top:8px;
+  }
+
+  .badge {
+    display:inline-block;
+    background:var(--panel);
+    color:var(--ghost);
+    font-size:12px;
+    padding:4px 8px;
+    border-radius:6px;
+    margin-right:6px;
+  }
+
+  .out-time { color:#9ae6b4; font-size:11px; margin-right:6px; }
+
+  .cmd-output { color:var(--green); }
+
+  .controls {
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+    align-items:center;
+  }
+
+  .btn {
+    background:transparent;
+    border:1px solid rgba(0,255,102,0.08);
+    color:var(--green);
+    padding:6px 10px;
+    border-radius:6px;
+    font-family:var(--mono);
+    cursor:pointer;
+    font-size:13px;
+  }
+  .btn:active { transform:translateY(1px); }
+
+/* --- Matrix Background CSS --- */
+  .matrix-container {
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    z-index: 1; 
+    overflow: hidden; 
+  }
+
+  .matrix-pattern {
+    position: relative;
+    width: 1000px;
+    height: 100%;
+    flex-shrink: 0;
+  }
+
+  .matrix-column {
+    position: absolute;
+    top: -100%;
+    width: 20px;
+    height: 100%;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: bold;
+    animation: fall linear infinite;
+    white-space: nowrap;
+  }
+
+  .matrix-column::before {
+    content: "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: linear-gradient(
+      to bottom,
+      #ffffff 0%,
+      #ffffff 5%,
+      #00ff41 10%,
+      #00ff41 20%,
+      #00dd33 30%,
+      #00bb22 40%,
+      #009911 50%,
+      #007700 60%,
+      #005500 70%,
+      #003300 80%,
+      rgba(0, 255, 65, 0.5) 90%,
+      transparent 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    writing-mode: vertical-lr;
+    letter-spacing: 1px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* ... (rest of the matrix-column child styles) ... */
+  .matrix-column:nth-child(1){left:0px;animation-delay:-2.5s;animation-duration:3s}
+  .matrix-column:nth-child(2){left:25px;animation-delay:-3.2s;animation-duration:4s}
+  .matrix-column:nth-child(3){left:50px;animation-delay:-1.8s;animation-duration:2.5s}
+  .matrix-column:nth-child(4){left:75px;animation-delay:-2.9s;animation-duration:3.5s}
+  .matrix-column:nth-child(5){left:100px;animation-delay:-1.5s;animation-duration:3s}
+  .matrix-column:nth-child(6){left:125px;animation-delay:-3.8s;animation-duration:4.5s}
+  .matrix-column:nth-child(7){left:150px;animation-delay:-2.1s;animation-duration:2.8s}
+  .matrix-column:nth-child(8){left:175px;animation-delay:-2.7s;animation-duration:3.2s}
+  .matrix-column:nth-child(9){left:200px;animation-delay:-3.4s;animation-duration:3.8s}
+  .matrix-column:nth-child(10){left:225px;animation-delay:-1.9s;animation-duration:2.7s}
+  .matrix-column:nth-child(11){left:250px;animation-delay:-3.6s;animation-duration:4.2s}
+  .matrix-column:nth-child(12){left:275px;animation-delay:-2.3s;animation-duration:3.1s}
+  .matrix-column:nth-child(13){left:300px;animation-delay:-3.1s;animation-duration:3.6s}
+  .matrix-column:nth-child(14){left:325px;animation-delay:-2.6s;animation-duration:2.9s}
+  .matrix-column:nth-child(15){left:350px;animation-delay:-3.7s;animation-duration:4.1s}
+  .matrix-column:nth-child(16){left:375px;animation-delay:-2.8s;animation-duration:3.3s}
+  .matrix-column:nth-child(17){left:400px;animation-delay:-3.3s;animation-duration:3.7s}
+  .matrix-column:nth-child(18){left:425px;animation-delay:-2.2s;animation-duration:2.6s}
+  .matrix-column:nth-child(19){left:450px;animation-delay:-3.9s;animation-duration:4.3s}
+  .matrix-column:nth-child(20){left:475px;animation-delay:-2.4s;animation-duration:3.4s}
+  .matrix-column:nth-child(21){left:500px;animation-delay:-1.7s;animation-duration:2.4s}
+  .matrix-column:nth-child(22){left:525px;animation-delay:-3.5s;animation-duration:3.9s}
+  .matrix-column:nth-child(23){left:550px;animation-delay:-2s;animation-duration:3s}
+  .matrix-column:nth-child(24){left:575px;animation-delay:-4s;animation-duration:4.4s}
+  .matrix-column:nth-child(25){left:600px;animation-delay:-1.6s;animation-duration:2.3s}
+  .matrix-column:nth-child(26){left:625px;animation-delay:-3s;animation-duration:3.5s}
+  .matrix-column:nth-child(27){left:650px;animation-delay:-3.8s;animation-duration:4s}
+  .matrix-column:nth-child(28){left:675px;animation-delay:-2.5s;animation-duration:2.8s}
+  .matrix-column:nth-child(29){left:700px;animation-delay:-3.2s;animation-duration:3.6s}
+  .matrix-column:nth-child(30){left:725px;animation-delay:-2.7s;animation-duration:3.2s}
+  .matrix-column:nth-child(31){left:750px;animation-delay:-1.8s;animation-duration:2.7s}
+  .matrix-column:nth-child(32){left:775px;animation-delay:-3.6s;animation-duration:4.1s}
+  .matrix-column:nth-child(33){left:800px;animation-delay:-2.1s;animation-duration:3.1s}
+  .matrix-column:nth-child(34){left:825px;animation-delay:-3.4s;animation-duration:3.7s}
+  .matrix-column:nth-child(35){left:850px;animation-delay:-2.8s;animation-duration:2.9s}
+  .matrix-column:nth-child(36){left:875px;animation-delay:-3.7s;animation-duration:4.2s}
+  .matrix-column:nth-child(37){left:900px;animation-delay:-2.3s;animation-duration:3.3s}
+  .matrix-column:nth-child(38){left:925px;animation-delay:-1.9s;animation-duration:2.5s}
+  .matrix-column:nth-child(39){left:950px;animation-delay:-3.5s;animation-duration:3.8s}
+  .matrix-column:nth-child(40){left:975px;animation-delay:-2.6s;animation-duration:3.4s}
+
+  .matrix-column:nth-child(odd)::before {
+    content: "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン123456789";
+  }
+  .matrix-column:nth-child(even)::before {
+    content: "ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポヴァィゥェォャュョッABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  }
+  .matrix-column:nth-child(3n)::before {
+    content: "アカサタナハマヤラワイキシチニヒミリウクスツヌフムユルエケセテネヘメレオコソトノホモヨロヲン0987654321";
+  }
+  .matrix-column:nth-child(4n)::before {
+    content: "ンヲロヨモホノトソコオレメヘネテセケエルユムフヌツスクウリミヒニチシキイワラヤマハナタサカア";
+  }
+  .matrix-column:nth-child(5n)::before {
+    content: "ガザダバパギジヂビピグズヅブプゲゼデベペゴゾドボポヴァィゥェォャュョッ!@#$%^&*()_+-=[]{}|;:,.<>?";
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(-10%); opacity: 1; }
+    100% { transform: translateY(200%); opacity: 0; }
+  }
+
+  /* --- Popup Window Styles --- */
+  #window-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+  }
+  #popup-window {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px; /* Window width */
+    background: #2b2b2b;
+    border: 1px solid #777;
+    border-radius: 6px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 100;
+  }
+  .window-title-bar {
+    background: #3c3c3c;
+    color: #e0e0e0;
+    padding: 8px 12px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+  }
+  #btn-close-window {
+    background: #e74c3c;
+    color: #fff;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-family: sans-serif;
+    cursor: pointer;
+    line-height: 18px;
+  }
+  #btn-close-window:hover {
+    background: #c0392b;
+  }
+  .window-content {
+    padding: 20px;
+    /* !! ADDED: Ensure cube perspective is contained */
+    perspective: 1000px;
+  }
+
+  /* --- Rubik's Cube Loader CSS --- */
+  
+  /* !! FIXED: Scaled cube down from 200px to 100px !! */
+  .my-loader {
+    width: 100px;
+    height: 100px;
+    perspective: 1000px; /* This was redundant, but safe to keep */
+    margin: 20px auto; /* Added some top/bottom margin */
+  }
+
+  .rubiks-cube {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: my-rotateCube 5s infinite linear;
+  }
+
+  .my-loader .face {
+    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* !! FIXED: Halved all translateZ values from 100px to 50px !! */
+  .my-loader .face.front { transform: translateZ(50px); }
+  .my-loader .face.back { transform: rotateY(180deg) translateZ(50px); }
+  .my-loader .face.left { transform: rotateY(-90deg) translateZ(50px); }
+  .my-loader .face.right { transform: rotateY(90deg) translateZ(50px); }
+  .my-loader .face.top { transform: rotateX(90deg) translateZ(50px); }
+  .my-loader .face.bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+  .my-loader .cube {
+    width: calc(100% / 3);
+    height: calc(100% / 3);
+    box-sizing: border-box;
+    border: 1px solid #000;
+  }
+
+  @keyframes my-rotateCube {
+    0% { transform: rotateX(0deg) rotateY(0deg); }
+    100% { transform: rotateX(360deg) rotateY(360deg); }
+  }
+  /* --- END Rubik's Cube Loader CSS --- */
+
+
+  /* --- Responsive Styles --- */
+  @media (max-width: 768px) {
+    .matrix-column { font-size: 14px; line-height: 16px; width: 18px; }
+  }
+  @media (max-width: 560px){
+    .prompt { min-width:120px; font-size:13px; }
+    input#cmd { font-size:14px; }
+    .wrap { padding:12px; margin:8px; }
+    
+    /* Reposition popup on small screens */
+    #popup-window {
+        width: 90%;
+    }
+    .window-content {
+        /* Adjust padding to ensure cube fits */
+        padding: 10px;
+    }
+  }
+  @media (max-width: 480px) {
+    .matrix-column { font-size: 12px; line-height: 14px; width: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="matrix-container">
+  <div class="matrix-pattern">
+    <div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div>
+  </div>
+  <div class="matrix-pattern">
+    <div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div>
+  </div>
+  <div class="matrix-pattern">
+    <div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div>
+  </div>
+  <div class="matrix-pattern">
+    <div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div>
+  </div>
+  <div class="matrix-pattern">
+    <div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div><div class="matrix-column"></div>
+  </div>
+</div>
+
+<div class="wrap" role="main" aria-label="Rahul's hacker terminal portfolio">
+  <div id="terminal">
+    <div class="banner">
+<pre style="margin:0;line-height:1">
+ ____      _    _   _ _   _ _     
+|  _ \    / \  | | | | | | | |    
+| |_) |  / _ \ | |_| | | | | |    
+|  _ <  / ___ \|  _  | |_| | |___ 
+|_| \_\/_/   \_\_| |_|\___/|_____|
+                                
+</pre>
+    </div>
+
+    <pre id="output" aria-live="polite" role="log">
+<span class="out-time">[init @ <span id="init-time"></span>]</span>
+<span class="cmd-output">Type <span style="color:var(--accent)">'help'</span> to start — try commands like <span style="color:var(--accent)">about</span>, <span style="color:var(--accent)">projects</span>, <span style="color:var(--accent)">blog</span>.</span>
+    </pre>
+
+    <div class="prompt-line">
+      <div class="prompt">rahul@portfolio:~$</div>
+      <div class="input-wrap">
+        <input id="cmd" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" />
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="btn-help">help</button>
+      <button class="btn" id="btn-clear">clear</button>
+      <button class="btn" id="btn-copy">Copy output</button>
+      <div style="flex:1"></div>
+      <div class="meta">
+        <span class="badge">Cybersecurity</span>
+        <span class="badge">Ethical Hacker</span>
+        <span class="badge">Developer</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="window-overlay"></div>
+<div id="popup-window">
+  <div class="window-title-bar">
+    <span>Executing ./rubiks_solver.sh</span>
+    <div id="btn-close-window" title="Close">×</div>
+  </div>
+  <div class="window-content">
+    <div class="my-loader">
+      <div class="rubiks-cube">
+        <div class="face front">
+          <div style="background: #ff3d00;" class="cube"></div>
+          <div style="background: #ffeb3b;" class="cube"></div>
+          <div style="background: #4caf50;" class="cube"></div>
+          <div style="background: #2196f3;" class="cube"></div>
+          <div style="background: #ffffff;" class="cube"></div>
+          <div style="background: #ffeb3b;" class="cube"></div>
+          <div style="background: #4caf50;" class="cube"></div>
+          <div style="background: #2196f3;" class="cube"></div>
+          <div style="background: #ff3d00;" class="cube"></div>
+        </div>
+        <div class="face back">
+          <div style="background: #4caf50;" class="cube"></div>
+          <div style="background: #ff3d00;" class="cube"></div>
+          <div style="background: #ffeb3b;" class="cube"></div>
+          <div style="background: #2196f3;" class="cube"></div>
+          <div style="background: #ffffff;" class="cube"></div>
+          <div style="background: #ff3d00;" class="cube"></div>
+          <div style="background: #ffeb3b;" class="cube"></div>
+          <div style="background: #4caf50;" class="cube"></div>
+          <div style="background: #2196f3;" class="cube"></div>
+        </div>
+        <div class="face left">
+          <div style="background: #ffeb3b;" class="cube"></div>
+          <div style="background: #4caf50;" class="cube"></div>
+          <div style="background: #2196f3;" class="cube"></div>
+          <div style="background: #ff3d00;" class="cube"></div>
+          <div style="background: #ffffff;" class="cube"></div>
+          <div style="background: #4caf50;" class="cube"></div>
+          <div style="background: #2196f3;" class="cube"></div>
+          <div style="background: #ffeb3b;" class="cube"></div>
+          <div style="background: #ff3d00;" class="cube"></div>
+        </div>
+        <div class="face right">
+          <div style="background: #4caf50;" class="cube"></div>
+          <div style="background: #ff3d00;" class="cube"></div>
+          <div style="background: #ffeb3b;" class="cube"></div>
+          <div style="background: #2196f3;" class="cube"></div>
+          <div style="background: #ffffff;" class="cube"></div>
+          <div style="background: #ff3d00;" class="cube"></div>
+          <div style="background: #ffeb3b;" class="cube"></div>
+          <div style="background: #4caf50;" class="cube"></div>
+          <div style="background: #2196f3;" class="cube"></div>
+        </div>
+        <div class="face top">
+          <div style="background: #2196f3;" class="cube"></div>
+          <div style="background: #ffeb3b;" class="cube"></div>
+          <div style="background: #ff3d00;" class="cube"></div>
+          <div style="background: #4caf50;" class="cube"></div>
+          <div style="background: #ffffff;" class="cube"></div>
+          <div style="background: #ffeb3b;" class="cube"></div>
+          <div style="background: #ff3d00;" class="cube"></div>
+          <div style="background: #4caf50;" class="cube"></div>
+          <div style="background: #2196f3;" class="cube"></div>
+        </div>
+        <div class="face bottom">
+          <div style="background: #ffffff;" class="cube"></div>
+          <div style="background: #4caf50;" class="cube"></div>
+          <div style="background: #2196f3;" class="cube"></div>
+          <div style="background: #ff3d00;" class="cube"></div>
+          <div style="background: #ffeb3b;" class="cube"></div>
+          <div style="background: #4caf50;" class="cube"></div>
+          <div style="background: #2196f3;" class="cube"></div>
+          <div style="background: #ffffff;" class="cube"></div>
+          <div style="background: #ff3d00;" class="cube"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- CONFIG / DATA ---------- */
+
+const resumeContent = `
+RAHUL LINGAMPALLY
+Aspiring Cyber Security Professional
+
+[EDUCATION]
+- Bachelor of Computer Science (Cyber Security)
+  Anurag University (Expected 2026)
+
+[EXPERIENCE]
+- Cybersecurity Job Simulation | PwC Switzerland (Mar 2025)
+  Conducted risk assessments and formulated security recommendations.
+- Cyber Job Simulation | Deloitte Australia (Mar 2025)
+  Analyzed web activity logs and supported breach response.
+
+[CERTIFICATIONS]
+- (BTJA) Security blue team Blue Team Junior Analyst
+- (EHE) EC-Council - Ethical Hacking Essentials
+- (CC) ISC2 - Certified in Cyber Security
+- Cisco Ethical Hacker
+- Google - Cyber Security Professional
+
+(Type 'resume' to open my full portfolio website)
+`;
+
+const skillsContent = "[Technical Skills]\n- Risk Assessment, Linux, Network Security\n- Impact Analysis, Log Inspection, Computer Networks\n- SQL, HTML/CSS/JS, Java, Python\n\n[Soft Skills]\n- Problem Solving, Team Collaboration, Adaptability, Critical Thinking";
+
+const commands = {
+  help: {
+    out: "...", // Generated by formatHelp()
+    pretty: true
+  },
+  about: {
+    out: "Aspiring Cyber Security professional passionate about threat analysis, ethical hacking, and securing systems against cyber threats. Seeking opportunities to apply and enhance my skills in real-world security challenges."
+  },
+  skills: {
+    out: skillsContent
+  },
+  projects: {
+    out: "[PROJECTS]\n\n1. Secure Chat Room\n   Developed a secure chat application using Node.js and Socket.IO, implementing encrypted messaging and user authentication.\n\n2. Web Reconnaissance Automation with AI\n   Built a custom recon platform with modular scanners (like Nmap, Gobuster) and AI-generated vulnerability summaries with a web UI.\n\n3. Packet Scanner\n   Developed a real-time packet scanner web app using Flask and Scapy for live network traffic monitoring and analysis."
+  },
+  contact: {
+    out: "You can reach me here:\n\nEmail:    sunnyrahul182@gmail.com\nLinkedIn: https://linkedin.com/in/rahul-lingampally\nWebsite:  https://www.rahullingampally.online"
+  },
+  resume: {
+    out: "Opening my portfolio website (www.rahullingampally.online) where you can download the full PDF resume...",
+    link: "https://www.rahullingampally.online"
+  },
+  ls: {
+    out: "projects/  resume.txt  skills.txt  blog.txt  rubiks_solver.sh" // Added new file
+  },
+  'cat resume': {
+    out: `----- resume.txt (preview) -----\n${resumeContent}\n---------------------------------`
+  },
+  'cat skills': {
+    out: skillsContent
+  },
+  whoami: {
+    out: "rahul"
+  },
+  env: {
+    out: "SHELL=/bin/bash\nTERM=xterm-256color\nUSER=rahul"
+  },
+  'blog': {
+    out: "Opening blog.html...",
+    link: "blog.html"
+  },
+  'cat blog.txt': {
+    out: "This is my personal blog, where I document my journey on various machines, write-ups, and other cybersecurity topics.\n\nTo see it, just type `blog` to open the site."
+  },
+  // --- !! NEW: Popup Window Commands !! ---
+  './rubiks_solver.sh': {
+    out: "Permission granted. Executing 3D model...\nOpening new window...",
+    action: 'open_rubiks' // New action key
+  },
+  'cat rubiks_solver.sh': {
+    out: "#!/bin/bash\n# A 3D model visualizer. Run with ./rubiks_solver.sh"
+  }
+};
+
+/* ---------- UI HOOKS ---------- */
+const input = document.getElementById('cmd');
+const output = document.getElementById('output');
+const initTime = document.getElementById('init-time');
+const btnHelp = document.getElementById('btn-help');
+const btnClear = document.getElementById('btn-clear');
+const btnCopy = document.getElementById('btn-copy');
+
+const popupWindow = document.getElementById('popup-window');
+const windowOverlay = document.getElementById('window-overlay');
+const btnCloseWindow = document.getElementById('btn-close-window');
+
+
+initTime.textContent = (new Date()).toLocaleString();
+
+/* ---------- UX: history, autocomplete ---------- */
+let history = [];
+let histIndex = -1;
+
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const raw = input.value.trim();
+    if (raw) runCommand(raw);
+    input.value = '';
+    histIndex = -1;
+    if (raw) history.unshift(raw);
+    e.preventDefault();
+  } else if (e.key === 'ArrowUp') {
+    if (history.length && histIndex < history.length - 1) {
+      histIndex++;
+      input.value = history[histIndex] || '';
+      setTimeout(() => input.selectionStart = input.selectionEnd = input.value.length, 0);
+    }
+    e.preventDefault();
+  } else if (e.key === 'ArrowDown') {
+    if (histIndex > 0) {
+      histIndex--;
+      input.value = history[histIndex] || '';
+      setTimeout(() => input.selectionStart = input.selectionEnd = input.value.length, 0);
+    } else {
+      histIndex = -1;
+      input.value = '';
+    }
+    e.preventDefault();
+  } else if (e.key === 'Tab') {
+    e.preventDefault();
+    const val = input.value;
+    const allCommands = [
+        ...Object.keys(commands), 
+        'ls projects', 'cat skills.txt', 'cat resume.txt', 'cat blog.txt', 'cat rubiks_solver.sh'
+    ];
+    const matches = allCommands.filter(c => c.startsWith(val));
+    
+    if (matches.length === 1) input.value = matches[0];
+    else if (matches.length > 1) appendOutput("autocomplete: " + matches.join(', '));
+  }
+});
+
+/* buttons */
+btnHelp.addEventListener('click', () => runCommand('help'));
+btnClear.addEventListener('click', () => runCommand('clear'));
+btnCopy.addEventListener('click', () => copyOutput());
+
+btnCloseWindow.addEventListener('click', hidePopup);
+windowOverlay.addEventListener('click', hidePopup);
+
+
+/* ---------- COMMAND RUNNER ---------- */
+function runCommand(cmd) {
+  // Check for the new command
+  if (cmd === './rubiks_solver.sh') {
+      appendOutput(`[${timeNow()}] rahul@portfolio:~$ ${cmd}`, true);
+      handleCommandObj(cmd, commands[cmd]);
+      return;
+  }
+  
+  appendOutput(`[${timeNow()}] rahul@portfolio:~$ ${cmd}`, true);
+
+  if (cmd === 'clear') {
+    output.textContent = '';
+    return;
+  }
+
+  // 1. Direct match
+  if (commands[cmd]) {
+    handleCommandObj(cmd, commands[cmd]);
+    return;
+  }
+
+  // 2. Prefix-based for 'cat <file>'
+  if (cmd.startsWith('cat ')) {
+    const fname = cmd.slice(4).trim();
+    if (fname === 'resume' || fname === 'resume.txt') {
+      handleCommandObj('cat resume', commands['cat resume']);
+      return;
+    }
+    if (fname === 'skills' || fname === 'skills.txt') {
+      handleCommandObj('cat skills', commands['cat skills']);
+      return;
+    }
+    if (fname === 'blog.txt') {
+      handleCommandObj('cat blog.txt', commands['cat blog.txt']);
+      return;
+    }
+    if (fname === 'rubiks_solver.sh') {
+      handleCommandObj('cat rubiks_solver.sh', commands['cat rubiks_solver.sh']);
+      return;
+    }
+    appendOutput(`cat: ${fname}: No such file or directory`);
+    return;
+  }
+
+  // 3. Prefix-based for 'ls <dir>'
+  if (cmd.startsWith('ls ')) {
+     const dir = cmd.slice(3).trim();
+     if (dir === 'projects' || dir === 'projects/') {
+        const projectsList = "Secure_Chat_Room\nWeb_Recon_AI\nPacket_Scanner";
+        handleCommandObj('ls projects', { out: projectsList });
+        return;
+     }
+     if (['resume.txt', 'skills.txt', 'blog.txt', 'rubiks_solver.sh'].includes(dir)) {
+         handleCommandObj('ls file', { out: dir }); 
+         return;
+     }
+     appendOutput(`ls: cannot access '${dir}': No such file or directory`);
+     return;
+  }
+
+  // 4. Not found
+  // !! FIXED: Removed stray "D" syntax error !!
+  appendOutput("Command not found: " + cmd + "\nType 'help' for available commands.");
+}
+
+/* handle object or string commands */
+function handleCommandObj(name, obj) {
+  if (obj.link) {
+    appendOutput(obj.out || `Opening ${obj.link}...`);
+    window.open(obj.link, '_blank');
+    return;
+  }
+  
+  if (obj.download) {
+    appendOutput(obj.out || '');
+    triggerDownload(obj.fileName || 'file.txt', obj.content || '');
+    return;
+  }
+
+  if (obj.action === 'open_rubiks') {
+    typeOut(obj.out, 15); 
+    setTimeout(showPopup, 700); 
+    return;
+  }
+  
+  const text = obj.out || String(obj);
+  
+  if (obj.pretty) {
+    appendOutput(formatHelp());
+  } else {
+    typeOut(text);
+  }
+}
+
+/* ---------- OUTPUT HELPERS ---------- */
+function appendOutput(text, raw=false) {
+  const node = document.createElement('div');
+  node.style.whiteSpace = 'pre-wrap';
+  node.className = 'cmd-output';
+  node.innerText = text;
+  output.appendChild(node);
+  output.scrollTop = output.scrollHeight;
+}
+
+function typeOut(text, speed=8) {
+  const container = document.createElement('div');
+  container.style.whiteSpace = 'pre-wrap';
+  container.className = 'cmd-output';
+  output.appendChild(container);
+  let i = 0;
+  function step() {
+    container.innerText = text.slice(0, i);
+    output.scrollTop = output.scrollHeight;
+    if (i++ < text.length) {
+      setTimeout(step, speed);
+    }
+  }
+  step();
+}
+
+function showPopup() {
+  windowOverlay.style.display = 'block';
+  popupWindow.style.display = 'block';
+}
+function hidePopup() {
+  windowOverlay.style.display = 'none';
+  popupWindow.style.display = 'none';
+}
+
+function formatHelp(){
+  const blocks = [
+    {cmd:'./rubiks_solver.sh', desc:'Execute the 3D model visualizer'},
+    {cmd:'about', desc:'Short intro / objective'},
+    {cmd:'skills', desc:'List technical & soft skills'},
+    {cmd:'projects', desc:'Showcase my top projects'},
+    {cmd:'blog', desc:'Opens my blog (blog.html)'},
+    {cmd:'contact', desc:'Email/LinkedIn/Website'},
+    {cmd:'resume', desc:'Opens my portfolio site (w/ PDF)'},
+    {cmd:'ls', desc:'List virtual files/dirs'},
+    {cmd:'cat blog.txt', desc:'What is the blog?'},
+    {cmd:'cat resume', desc:'Preview resume summary'},
+    {cmd:'cat skills', desc:'Preview skills summary'},
+    {cmd:'cat rubiks_solver.sh', desc:'Inspect the visualizer script'},
+    {cmd:'whoami', desc:'Identity'},
+    {cmd:'env', desc:'Environment variables'},
+    // !! FIXED: Corrected syntax error (D:) !!
+    {cmd:'clear', desc:'Clear the terminal output'}
+  ];
+  let out = 'Available commands:\n\n';
+  blocks.sort((a, b) => a.cmd.localeCompare(b.cmd));
+  
+  blocks.forEach(b => {
+    out += pad(b.cmd, 20) + ' — ' + b.desc + '\n';
+  });
+  out += '\nTip: Use ↑ / ↓ for history. Press Tab for autocomplete.';
+  return out;
+}
+
+function pad(s, n) { return s + ' '.repeat(Math.max(0, n - s.length)); }
+
+function timeNow() {
+  return (new Date()).toLocaleTimeString();
+}
+
+/* ---------- utilities ---------- */
+function triggerDownload(filename, content) {
+  const blob = new Blob([content], {type: 'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  appendOutput(`[downloaded: ${filename}]`);
+}
+
+function copyOutput() {
+  const text = output.innerText;
+  navigator.clipboard?.writeText(text).then(() => {
+    appendOutput('[copied output to clipboard]');
+  }).catch(()=> {
+    appendOutput('[copy failed: browser denied permission]');
+  });
+}
+
+/* initialize focus */
+input.focus();
+window.addEventListener('click', (e) => {
+    if (e.target.tagName !== 'BUTTON' && !popupWindow.contains(e.target)) {
+        input.focus();
+    }
+});
+
+window.addEventListener('load', () => {
+  setTimeout(() => input.focus(), 120);
+});
+</script>
+</body>
+</html>
