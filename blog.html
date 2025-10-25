@@ -1,175 +1,143 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Rahul's Blog</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💻</text></svg>">
-<style>
-  /* --- Base Theme (Copied from index.html) --- */
-  :root{
-    --bg:#010101;
-    --green:#00ff66;
-    --muted:#0f0f0f; /* Used for borders/dividers */
-    --accent:#66ccff; /* Used for post titles */
-    --ghost:#7bed9f; /* Used for meta-data */
-    --text-color: #e0e0e0; /* Main text for readability */
-    --panel: rgba(255,255,255,0.02);
-    --mono: 'Courier New', ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyber Security Blog | Home</title>
 
-  html,body{
-    height:100%;
-    margin:0;
-    /* This page uses the simple dark background for readability */
-    background:linear-gradient(180deg,#000 0%, #020202 60%);
-    color:var(--text-color); 
-    font-family:var(--mono);
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    line-height: 1.6;
-  }
+  <style>
+    /* ---------- Base Styles ---------- */
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #0b0c10;
+      color: #e8e8e8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
 
-  /* --- Blog Styles --- */
-  .blog-wrap{
-    max-width:900px;
-    margin:24px auto;
-    padding:18px;
-  }
+    header {
+      text-align: center;
+      padding: 70px 20px 20px;
+    }
 
-  .back-link {
-    display: inline-block;
-    color: var(--accent);
-    text-decoration: none;
-    font-size: 1.1em;
-    margin-bottom: 25px;
-    padding: 8px 12px;
-    border: 1px solid var(--muted);
-    background: var(--panel);
-  }
-  .back-link:hover {
-    background: var(--muted);
-    color: var(--green);
-  }
+    header h1 {
+      font-size: 2.6rem;
+      color: #9be564; /* muted cyber green */
+      text-shadow: 0 0 8px #4caf50, 0 0 20px #305c3f;
+      letter-spacing: 1px;
+    }
 
-  .blog-title {
-    font-size: 2.5em;
-    color: var(--green);
-    margin-bottom: 10px;
-    border-bottom: 1px solid var(--muted);
-    padding-bottom: 10px;
-  }
+    header p {
+      color: #9caea9;
+      font-size: 1.1rem;
+      margin-top: 10px;
+    }
 
-  /* --- Post Index (Table of Contents) --- */
-  .post-index {
-    background: var(--panel);
-    border: 1px solid var(--muted);
-    padding: 15px 25px;
-    border-radius: 6px;
-    margin-bottom: 40px;
-  }
-  .post-index h3 {
-    margin-top: 0;
-    color: var(--green);
-    font-size: 1.4em;
-  }
-  .post-index ul {
-    list-style: none;
-    padding-left: 0;
-    line-height: 1.8;
-  }
-  .post-index a {
-    color: var(--ghost);
-    text-decoration: none;
-  }
-  .post-index a:hover {
-    color: var(--green);
-    text-decoration: underline;
-  }
-  .post-index .meta-date {
-    color: var(--accent);
-    margin-right: 10px;
-  }
-  .post-index .no-posts {
-    color: var(--ghost);
-    opacity: 0.7;
-  }
+    /* ---------- Card Container ---------- */
+    .card-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 0;
+      width: 100%;
+    }
 
-  /* --- Individual Post Styling --- */
-  .post {
-    margin-bottom: 40px;
-  }
-  .post h2 {
-    color: var(--accent);
-    font-size: 1.8em;
-    margin-bottom: 5px;
-  }
-  .post .post-meta {
-    color: var(--ghost);
-    font-size: 0.9em;
-    margin-bottom: 15px;
-  }
-  .post p {
-    font-size: 1.1em;
-    margin-bottom: 15px;
-  }
-  .post a {
-    color: var(--accent);
-  }
+    .card {
+      background: #101417;
+      border: 1px solid #3a8c56;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(80, 255, 140, 0.05);
+      transition: all 0.35s ease;
+      cursor: pointer;
+      overflow: hidden;
+      max-width: 380px;
+      text-align: left;
+    }
 
-  /* Code Blocks */
-  .code-block {
-    display: block;
-    background: #000;
-    border: 1px solid var(--muted);
-    padding: 15px;
-    color: var(--green);
-    overflow-x: auto;
-    font-family: var(--mono);
-    font-size: 1em;
-    white-space: pre;
-    border-radius: 4px;
-    margin: 15px 0;
-  }
+    .card:hover {
+      transform: translateY(-8px);
+      border-color: #6ee76a;
+      box-shadow: 0 0 20px rgba(110, 231, 106, 0.2);
+    }
 
-  .post-divider {
-    border: 0;
-    height: 1px;
-    background: var(--muted);
-    margin-top: 40px;
-  }
-</style>
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-bottom: 1px solid #2a3a2f;
+      filter: brightness(0.85);
+    }
+
+    .card-content {
+      padding: 24px;
+    }
+
+    .card-content h3 {
+      margin: 0;
+      color: #8be98b;
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    .card-content p {
+      color: #b5c2b1;
+      font-size: 1rem;
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    /* ---------- Footer ---------- */
+    footer {
+      padding: 40px 20px;
+      text-align: center;
+      color: #7c8c7c;
+      font-size: 0.9rem;
+      border-top: 1px solid #121a14;
+      width: 100%;
+    }
+
+    /* ---------- Hover Accent ---------- */
+    .card:hover h3 {
+      color: #a8ff8a;
+      text-shadow: 0 0 8px rgba(168, 255, 138, 0.3);
+    }
+
+    /* ---------- Responsiveness ---------- */
+    @media (max-width: 500px) {
+      header h1 {
+        font-size: 2rem;
+      }
+
+      .card {
+        max-width: 90%;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<div class="blog-wrap">
-  
-  <a href="index.html" class="back-link">< rahul@portfolio:~$ cd ..</a>
+  <header>
+    <h1>Cyber Security Insights</h1>
+    <p>Deep analysis, digital defense, and intelligence in the cyber world.</p>
+  </header>
 
-  <h1 class="blog-title">// BLOG & WRITEUPS</h1>
-
-  <section class="post-index">
-    <h3>FILE_INDEX</h3>
-    <ul>
-      <li>
-        <span class="no-posts">No transmissions yet... Check back soon.</span>
-      </li>
-      </ul>
+  <section class="card-container">
+    <!-- Single Active Card -->
+    <div class="card" onclick="window.location.href='https://www.canva.com/design/DAG2xnw0HBI/ouGRgI0n6wvcJpDI0-jvmA/view?utm_content=DAG2xnw0HBI&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hd1370f2a9b'">
+      <img src="https://www.abnersecurity.com/wp-content/uploads/2021/07/hacker-computer-programming-5471975-1024x768.png" alt="Ransomware Attack">
+      <div class="card-content">
+        <h3>Understanding Ransomware Attacks</h3>
+        <p>Analyze the modern ransomware ecosystem, how attackers deploy encryption payloads, and the strategies to defend and recover effectively.</p>
+      </div>
+    </div>
   </section>
 
-
-  <main>
-
-    <article class="post" id="post-placeholder">
-      <h2>// NO TRANSMISSIONS YET...</h2>
-      <p>My blog is currently being set up. I'll be posting my VulnHub writeups, project dev logs, and cybersecurity notes here shortly.</p>
-      <p>In the meantime, head back to the terminal (click the back link above) to check out my projects and skills.</p>
-    </article>
-
-    </main>
-
-</div>
+  <footer>
+    © 2025 Cyber Security Blog | Designed by Rahul Lingampally 🛡️
+  </footer>
 
 </body>
-
 </html>
