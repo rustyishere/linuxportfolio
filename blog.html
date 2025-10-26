@@ -40,9 +40,12 @@
     .card-container {
       display: flex;
       justify-content: center;
-      align-items: center;
-      padding: 60px 0;
+      align-items: flex-start;
+      padding: 60px 20px;
       width: 100%;
+      gap: 24px;
+      flex-wrap: wrap;
+      max-width: 1200px;
     }
 
     .card {
@@ -97,6 +100,7 @@
       font-size: 0.9rem;
       border-top: 1px solid #121a14;
       width: 100%;
+      margin-top: auto;
     }
 
     /* ---------- Hover Accent ---------- */
@@ -106,6 +110,16 @@
     }
 
     /* ---------- Responsiveness ---------- */
+    @media (max-width: 900px) {
+      header h1 {
+        font-size: 2.2rem;
+      }
+
+      .card {
+        max-width: 48%;
+      }
+    }
+
     @media (max-width: 500px) {
       header h1 {
         font-size: 2rem;
@@ -131,6 +145,15 @@
       <div class="card-content">
         <h3>VulnHub Walkthrough — DC: 1</h3>
         <p>A beginner-friendly CTF from VulnHub. This walkthrough covers enumeration, privilege escalation, and root compromise — step-by-step with real-world methodology.</p>
+      </div>
+    </div>
+
+    <!-- Kioptrix Card -->
+    <div class="card" onclick="window.location.href='https://www.canva.com/design/DAG23I7mit8/tJKo1Zm9yQ7M65v_gYUY7w/view?utm_content=DAG23I7mit8&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hf2bf79957a'">
+      <img src="https://media.wired.com/photos/685afae01798b05426c824e5/master/w_2560%2Cc_limit/AI-Lab-AI-Model-Zero-Day-HAcker-Business.jpg" alt="Kioptrix Level 1">
+      <div class="card-content">
+        <h3>Kioptrix Level 1 — Complete Walkthrough</h3>
+        <p>Full Kioptrix 1 VM write-up: recon with Nmap, SMB enumeration, Metasploit trans2open exploit, and root achievement. Perfect for pentest beginners.</p>
       </div>
     </div>
   </section>
